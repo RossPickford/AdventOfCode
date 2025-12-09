@@ -1,15 +1,20 @@
 #include <stdio.h>
+#include <limits.h>
 #define STARTPOS 50
+#define LEFT -1
+#define DIALMAX 99
+#define DIAL_NEGATIVE_SHIFT 96
 #define SETDIRECTION (((c - 'L') / ('R' - 'L')) * 2) - 1
+
+void dialCheck(unsigned int* dialPos, int direction);
 
 int main(void)
 {
     int password = 0;
-    unsigned int dialPosition = STARTPOS, prevDial;
+    unsigned int dialPosition = STARTPOS;
     char direction = 0;
 
     FILE *input = fopen("DayOne_Input.txt", "r");
-    // FILE *input = fopen("test.txt", "r");
 
     char c;
     int movement = 0;
@@ -25,38 +30,19 @@ int main(void)
         }
         else
         {
-            // printf("%d : %d\n", direction, movement);
-            prevDial = dialPosition;
             dialPosition += (direction * movement);
-
-            if ((int)(prevDial - dialPosition) < 0 && direction == -1)
-            {
-                printf("%d\n", (int)(prevDial - dialPosition));
-                dialPosition -= 96;
-            }
-
-            if (dialPosition > 99)
-                dialPosition = dialPosition % 100;
+            dialCheck(&dialPosition, direction);
 
             if (dialPosition == 0)
                 password++;
 
-            // printf("%d\n", dialPosition);
             movement = 0;
         }
     }
 
-    // printf("%d : %d\n", direction, movement);
-    prevDial = dialPosition;
     dialPosition += (direction * movement);
 
-    if ((int)(prevDial - dialPosition) < 0 && direction == -1)
-    {
-        dialPosition -= 96;
-    }
-
-    if (dialPosition > 99)
-        dialPosition = dialPosition % 100;
+    dialCheck(&dialPosition, direction);
 
     if (dialPosition == 0)
         password++;
@@ -66,4 +52,18 @@ int main(void)
     printf("\n%d\n", password);
 
     return 0;
+}
+
+void dialCheck(unsigned int* dialPos, int direction)
+{
+    if (*dialPos > DIALMAX && direction == LEFT)
+    {
+        unsigned int diff = UINT_MAX - *dialPos;
+        *dialPos = DIALMAX - (diff % 100) + diff;
+    }
+
+    if (*dialPos > 99)
+    {
+        *dialPos = *dialPos % 100;
+    }
 }
