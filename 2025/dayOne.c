@@ -6,7 +6,9 @@
 #define DIAL_NEGATIVE_SHIFT 96
 #define SETDIRECTION (((c - 'L') / ('R' - 'L')) * 2) - 1
 
-void dialCheck(unsigned int* dialPos, int direction);
+int dialCheck(unsigned int *dialPos, int direction);
+
+unsigned int prevDial = 0;
 
 int main(void)
 {
@@ -15,6 +17,8 @@ int main(void)
     char direction = 0;
 
     FILE *input = fopen("DayOne_Input.txt", "r");
+    // FILE *input = fopen("dayOne_ExampleInput.txt", "r");
+    // FILE *input = fopen("dayOne_TestInput.txt", "r");
 
     char c;
     int movement = 0;
@@ -30,40 +34,42 @@ int main(void)
         }
         else
         {
+            prevDial = dialPosition;
             dialPosition += (direction * movement);
-            dialCheck(&dialPosition, direction);
-
-            if (dialPosition == 0)
-                password++;
+            password += dialCheck(&dialPosition, direction);
 
             movement = 0;
         }
     }
 
+    prevDial = dialPosition;
     dialPosition += (direction * movement);
-
-    dialCheck(&dialPosition, direction);
-
-    if (dialPosition == 0)
-        password++;
-
-    movement = 0;
+    password += dialCheck(&dialPosition, direction) + (dialPosition == 0);
 
     printf("\n%d\n", password);
 
     return 0;
 }
 
-void dialCheck(unsigned int* dialPos, int direction)
+int dialCheck(unsigned int *dialPos, int direction)
 {
+    unsigned int passes = 0, test = prevDial;
     if (*dialPos > DIALMAX && direction == LEFT)
     {
-        unsigned int diff = UINT_MAX - *dialPos;
-        *dialPos = DIALMAX - (diff % 100) + diff;
+        unsigned int diff = UINT_MAX - *dialPos;        // this is only when the dialPos loops back to the high end of an unsigned int
+        *dialPos = diff - (2 * (diff % 100)) + DIALMAX; // This adjusts the dialPos
+
+        if (prevDial != 0)
+            passes++;
     }
 
-    if (*dialPos > 99)
-    {
-        *dialPos = *dialPos % 100;
-    }
+    passes += *dialPos / 100;
+
+    if (*dialPos % 100 == 0)
+        passes--;
+
+    *dialPos = *dialPos % 100;
+
+    passes += (*dialPos == 0);
+    return passes;
 }
