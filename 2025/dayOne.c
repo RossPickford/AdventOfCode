@@ -16,9 +16,9 @@ int main(void)
     unsigned int dialPosition = STARTPOS;
     char direction = 0;
 
-    FILE *input = fopen("DayOne_Input.txt", "r");
+    // FILE *input = fopen("DayOne_Input.txt", "r");
     // FILE *input = fopen("dayOne_ExampleInput.txt", "r");
-    // FILE *input = fopen("dayOne_TestInput.txt", "r");
+    FILE *input = fopen("dayOne_TestInput.txt", "r");
 
     char c;
     int movement = 0;
@@ -56,26 +56,28 @@ int dialCheck(unsigned int *dialPos, int direction)
     int passes = 0, test = prevDial;
     if (*dialPos > DIALMAX && direction == LEFT)
     {
-        unsigned int diff = UINT_MAX - *dialPos;        // this is only when the dialPos loops back to the high end of an unsigned int
-        *dialPos = diff - (2 * (diff % 100)) + DIALMAX; // This adjusts the dialPos
+        unsigned int diff = UINT_MAX - *dialPos; // This is only when the dialPos loops back to the high end of an unsigned int
+        *dialPos = diff - (2 * (diff % 100)) + DIALMAX + 100; // This adjusts the dialPos
 
         if (prevDial != 0)
             *dialPos += 100;
 
-        if (*dialPos % 100 == 0 && prevDial == 0)
-            passes--;
+        // if (*dialPos % 100 == 0 && prevDial == 0)
+        // passes--;
     }
 
     passes += *dialPos / 100;
 
-    passes += (*dialPos == 0);
+    if (*dialPos == 0)
+        passes += (*dialPos == 0);
+
     *dialPos = *dialPos % 100;
 
     return passes;
 }
 
 // going R to 100 means +1
-// going L from 0 to another 0 means 1 less pass
+// going L from 0 to another 0 means ignore dialpos == 0
 // going R from non-zero to 0 over several iterations
 // going L from non-zero to 0 over several iterations
 
