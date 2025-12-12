@@ -68,8 +68,8 @@ int dialCheck(unsigned int *dialPos, int direction)
 
     passes += *dialPos / 100;
 
-    if (*dialPos == 0)
-        passes += (*dialPos == 0);
+    // if (*dialPos == 0)
+    passes += (*dialPos == 0);
 
     *dialPos = *dialPos % 100;
 
