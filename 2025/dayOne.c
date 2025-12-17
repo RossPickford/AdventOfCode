@@ -53,7 +53,7 @@ int main(void)
 int dialCheck(unsigned int *dialPos, int direction)
 {
     int passes = 0, test = prevDial;
-    
+
     if (*dialPos > DIALMAX && direction == LEFT)
     {
         unsigned int diff = UINT_MAX - *dialPos; // This is only when the dialPos loops back to the high end of an unsigned int
