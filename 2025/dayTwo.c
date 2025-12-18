@@ -8,7 +8,8 @@ int main(void)
 {
     unsigned int ans = 0;
 
-    FILE *input = fopen("DayTwo_TestInput.txt", "r");
+    // FILE *input = fopen("DayTwo_TestInput.txt", "r");
+    FILE *input = fopen("DayTwo_Input.txt", "r");
 
     char c;
     unsigned int range[2];
@@ -34,6 +35,9 @@ int main(void)
         }
     }
 
+    range[1] = val;
+    ans += partOne(range);
+
     printf("\n%u\n", ans);
 
     return 0;
@@ -50,9 +54,9 @@ unsigned int partOne(unsigned int *input)
         return 0;
 
     if (inDigCount_1 % 2 != 0)
-        inDigCount_1 = pow(10, inDigCount_1 + 1);
+        *input = pow(10, --inDigCount_1);
     else if (inDigCount_2 % 2 != 0)
-        inDigCount_2 = pow(10, inDigCount_2 - 1);
+        *(input + 1) = pow(10, --inDigCount_2) - 1;
 
     inDigCount_1 /= 2;
     inDigCount_2 /= 2;
@@ -66,10 +70,16 @@ unsigned int partOne(unsigned int *input)
     inSecSeg_2 = *(input + 1) - (inFirstSeg_2 * pow(10, inDigCount_2));
 
     printf("%u, %u, %u, %u\n", inFirstSeg_1, inSecSeg_1, inFirstSeg_2, inSecSeg_2);
-
+    int first = 0;
     for (; inFirstSeg_1 <= inFirstSeg_2; inFirstSeg_1++)
     {
-        if (inFirstSeg_1 <= inSecSeg_2 && inFirstSeg_1 >= inSecSeg_1)
+        if (!first && inFirstSeg_1 < inSecSeg_1)
+        {
+            first = 1;
+            continue;
+        }
+
+        if (inFirstSeg_1 <= inSecSeg_2)
         {
             unsigned int test = inFirstSeg_1 + (inFirstSeg_1 * pow(10, getDigitCount(inFirstSeg_1)));
             total += test;
