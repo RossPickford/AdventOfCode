@@ -63,27 +63,19 @@ unsigned int partOne(unsigned int *input)
 
     unsigned int total = 0;
 
-    int inFirstSeg_1, inFirstSeg_2, inSecSeg_1, inSecSeg_2;
-    inFirstSeg_1 = *input / (pow(10, inDigCount_1));
-    inFirstSeg_2 = *(input + 1) / (pow(10, inDigCount_2));
-    inSecSeg_1 = *input - (inFirstSeg_1 * pow(10, inDigCount_1));
-    inSecSeg_2 = *(input + 1) - (inFirstSeg_2 * pow(10, inDigCount_2));
+    int inFirstSeg_1 = *input / (pow(10, inDigCount_1));
+    int inFirstSeg_2 = *(input + 1) / (pow(10, inDigCount_2));
 
-    printf("%u, %u, %u, %u\n", inFirstSeg_1, inSecSeg_1, inFirstSeg_2, inSecSeg_2);
+    printf("%u, %u\n", inFirstSeg_1, inFirstSeg_2);
     int first = 0;
     for (; inFirstSeg_1 <= inFirstSeg_2; inFirstSeg_1++)
     {
-        if (!first && inFirstSeg_1 < inSecSeg_1)
-        {
-            first = 1;
-            continue;
-        }
+        unsigned int val = inFirstSeg_1 + (inFirstSeg_1 * pow(10, getDigitCount(inFirstSeg_1)));
 
-        if (inFirstSeg_1 <= inSecSeg_2)
+        if (val >= *input && val <= *(input + 1))
         {
-            unsigned int test = inFirstSeg_1 + (inFirstSeg_1 * pow(10, getDigitCount(inFirstSeg_1)));
-            total += test;
-            printf("%u\n", test);
+            total += val;
+            printf("%u\n", val);
         }
     }
 
