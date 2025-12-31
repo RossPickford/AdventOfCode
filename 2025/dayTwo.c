@@ -20,6 +20,7 @@ int main(void)
     uint64_t range[2];
     uint64_t val = 0;
 
+    /*
     while ((c = fgetc(input)) != EOF)
     {
         if (c != '-' && c != ',' && c != '\n')
@@ -37,23 +38,23 @@ int main(void)
             val = 0;
 
             // ans += partOne(range);
-            // ans += partTwo(range);
+            ans += partTwo(range);
         }
     }
 
     range[1] = val;
     // ans += partOne(range);
-    // ans += partTwo(range);
+    ans += partTwo(range);
 
-    // printf("\n%llu\n", ans);
+    printf("\n%llu\n", ans); */
 
-    uint16_t **test = getDivisionList(4, 6);
+    uint16_t **test = getDivisionList(8, 14);
 
     for (uint16_t i = 0; *(test + i) != NULL; i++)
     {
-        for (uint16_t j = 0; *(*(test + i) + j) != NULL; j++)
+        for (uint16_t j = 0; *(test[i] + j) != 0; j++)
         {
-            printf("%u ", *(*(test + i) + j));
+            printf("%u ", *(test[i] + j));
         }
 
         printf("\n");
@@ -151,23 +152,23 @@ uint16_t **getDivisionList(uint16_t inDigiCount_1, uint16_t inDigiCount_2)
     uint16_t **list = (uint16_t **)malloc(sizeof(uint16_t *) * (inDigiCount_2 - inDigiCount_1 + 1)); // dynamic 2D array. Pointer to pointers
 
     uint16_t i = 0;
-    while (inDigiCount_1++ <= inDigiCount_2)
+    for (; inDigiCount_1 <= inDigiCount_2; inDigiCount_1++)
     {
-        u_int8_t size = 2;
+        uint8_t size = 2;
         uint16_t *divPtr = (uint16_t *)malloc(sizeof(uint16_t) * size);
         *divPtr = inDigiCount_1;
 
-        uint16_t div = 2, j = 1;
-        while (div++ != inDigiCount_1 / 2)
+        uint16_t j = 1;
+        for (uint16_t div = 2; div <= inDigiCount_1 / 2; div++)
         {
             if (inDigiCount_1 % div == 0)
             {
-                divPtr = (u_int16_t *)realloc(divPtr, ++size);
+                divPtr = (uint16_t *)realloc(divPtr, ++size);
                 *(divPtr + j++) = div;
             }
         }
 
-        *(divPtr + j) = NULL;
+        *(divPtr + j) = 0;
 
         *(list + i++) = divPtr;
     }
@@ -176,6 +177,5 @@ uint16_t **getDivisionList(uint16_t inDigiCount_1, uint16_t inDigiCount_2)
     return list;
 
     // TODO
-    //  give input values for the 2D array, and then output their values to see if the function works correctly.
-    //  If so, continue with then going through each division, and then calculating which values match the conditions.
+    // A little fun side project would be to have the array of pointers to remove any digit length that has no divisors.
 }
