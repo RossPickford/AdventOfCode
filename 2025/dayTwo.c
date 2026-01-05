@@ -8,6 +8,7 @@ uint64_t partOne(uint64_t *ans);
 uint64_t partTwo(uint64_t *input);
 uint16_t getDigitCount(uint32_t num);
 uint16_t **getDivisionList(uint16_t inDigiCount_1, uint16_t inDigiCount_2);
+uint16_t *removeDividends(uint16_t *divPtr, uint8_t index, uint8_t *size);
 
 int main(void)
 {
@@ -147,35 +148,93 @@ uint16_t getDigitCount(uint32_t num)
     return ++total;
 }
 
-uint16_t **getDivisionList(uint16_t inDigiCount_1, uint16_t inDigiCount_2)
+uint16_t **getDivisionList(uint16_t inDigiCount_1, uint16_t inDigiCount_2) // First row is the digit length, the rest are the divisors associated with that length in the same collumn
 {
     uint16_t **list = (uint16_t **)malloc(sizeof(uint16_t *) * (inDigiCount_2 - inDigiCount_1 + 1)); // dynamic 2D array. Pointer to pointers
+
+    if (list == NULL)
+    {
+        printf("Failed to allocate memory\n");
+        exit(0);
+    }
 
     uint16_t i = 0;
     for (; inDigiCount_1 <= inDigiCount_2; inDigiCount_1++)
     {
+        // Creating an array of divisors and storing the first value as the relevant digit length
         uint8_t size = 2;
         uint16_t *divPtr = (uint16_t *)malloc(sizeof(uint16_t) * size);
+
+        if (divPtr == NULL)
+        {
+            printf("Failed to allocate memory\n");
+            exit(0);
+        }
+
         *divPtr = inDigiCount_1;
 
-        uint16_t j = 1;
-        for (uint16_t div = 2; div <= inDigiCount_1 / 2; div++)
+        uint8_t divSize = 1;
+        for (uint16_t div = inDigiCount_1 / 2; div >= 2; div--)
         {
+            // Store divisor if successful
             if (inDigiCount_1 % div == 0)
             {
                 divPtr = (uint16_t *)realloc(divPtr, ++size);
-                *(divPtr + j++) = div;
+                *(divPtr + divSize++) = div;
             }
         }
 
-        *(divPtr + j) = 0;
+        divPtr = removeDividends(divPtr, 1, &divSize);
 
-        *(list + i++) = divPtr;
+        *(divPtr + divSize) = 0; // Signals the end of the divisor list
+
+        *(list + i++) = divPtr; // Add the list to the main 2D array
     }
 
-    *(list + i) = NULL;
+    *(list + i) = NULL; // Signals end of the rows
     return list;
-
-    // TODO
-    // A little fun side project would be to have the array of pointers to remove any digit length that has no divisors.
 }
+
+uint16_t *removeDividends(uint16_t *divPtr, uint8_t index, uint8_t *size)
+{
+    uint8_t tempSize = index + 1;
+    uint16_t *divPtrTemp = (uint16_t *)malloc(sizeof(uint16_t) * tempSize);
+
+    if (divPtrTemp == NULL)
+    {
+        printf("Failed To allocate Memory\n");
+        exit(0);
+    }
+
+    for (uint8_t i = 0; i <= index; i++) // Fill new array with values already checked.
+        *(divPtrTemp + i) = *(divPtr + i);
+
+    for (uint8_t i = index + 1; i < *size - 1; i++) // the arrays include an empty slot at the end, hence size - 1
+    {
+        if (*(divPtr + index) % *(divPtr + i) != 0)
+        {
+            divPtrTemp = (uint16_t *)realloc(divPtrTemp, tempSize + 1);
+
+            if (divPtrTemp == NULL)
+            {
+                printf("Failed To reallocate Memory\n");
+                exit(0);
+            }
+
+            *(divPtrTemp + tempSize++ - 1) = *(divPtr + i); // add the successful value to the end of the array
+        }
+    }
+
+    free(divPtr);
+
+    if (tempSize == *size)
+        return divPtrTemp;
+
+    *size = tempSize;
+    return removeDividends(divPtrTemp, ++index, size);
+}
+
+// TODO
+// Get the maximum digit count of a uint64 - 20 digits
+// Remove divisors that can fit in other divisors (such as 2 and 4 - would remove 2 as to avoid repeated values)
+// A little fun side project would be to have the array of pointers to remove any digit length that has no divisors.
