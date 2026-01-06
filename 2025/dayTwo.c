@@ -8,7 +8,7 @@ uint64_t partOne(uint64_t *ans);
 uint64_t partTwo(uint64_t *input);
 uint16_t getDigitCount(uint32_t num);
 uint16_t **getDivisionList(uint16_t inDigiCount_1, uint16_t inDigiCount_2);
-uint16_t *removeDividends(uint16_t *divPtr, uint8_t index, uint8_t *size);
+uint16_t *removeDividends(uint16_t *divPtr, uint16_t index, uint16_t *size);
 
 int main(void)
 {
@@ -162,7 +162,7 @@ uint16_t **getDivisionList(uint16_t inDigiCount_1, uint16_t inDigiCount_2) // Fi
     for (; inDigiCount_1 <= inDigiCount_2; inDigiCount_1++)
     {
         // Creating an array of divisors and storing the first value as the relevant digit length
-        uint8_t size = 2;
+        uint16_t size = 2;
         uint16_t *divPtr = (uint16_t *)malloc(sizeof(uint16_t) * size);
 
         if (divPtr == NULL)
@@ -173,20 +173,21 @@ uint16_t **getDivisionList(uint16_t inDigiCount_1, uint16_t inDigiCount_2) // Fi
 
         *divPtr = inDigiCount_1;
 
-        uint8_t divSize = 1;
+        uint16_t divIndex = 1;
         for (uint16_t div = inDigiCount_1 / 2; div >= 2; div--)
         {
             // Store divisor if successful
             if (inDigiCount_1 % div == 0)
             {
                 divPtr = (uint16_t *)realloc(divPtr, ++size);
-                *(divPtr + divSize++) = div;
+                *(divPtr + divIndex++) = div;
             }
         }
 
+        uint16_t divSize = divIndex + 1;
         divPtr = removeDividends(divPtr, 1, &divSize);
 
-        *(divPtr + divSize) = 0; // Signals the end of the divisor list
+        *(divPtr + divIndex) = 0; // Signals the end of the divisor list
 
         *(list + i++) = divPtr; // Add the list to the main 2D array
     }
@@ -195,9 +196,12 @@ uint16_t **getDivisionList(uint16_t inDigiCount_1, uint16_t inDigiCount_2) // Fi
     return list;
 }
 
-uint16_t *removeDividends(uint16_t *divPtr, uint8_t index, uint8_t *size)
+uint16_t *removeDividends(uint16_t *divPtr, uint16_t index, uint16_t *size)
 {
-    uint8_t tempSize = index + 1;
+    if (index >= *size - 1)
+        return divPtr;
+
+    uint16_t tempSize = index + 2; // The extra two is to convert an index to a size (+1) and then an extra space for the empty end slot
     uint16_t *divPtrTemp = (uint16_t *)malloc(sizeof(uint16_t) * tempSize);
 
     if (divPtrTemp == NULL)
@@ -206,10 +210,10 @@ uint16_t *removeDividends(uint16_t *divPtr, uint8_t index, uint8_t *size)
         exit(0);
     }
 
-    for (uint8_t i = 0; i <= index; i++) // Fill new array with values already checked.
+    for (uint16_t i = 0; i <= index; i++) // Fill new array with values already checked.
         *(divPtrTemp + i) = *(divPtr + i);
 
-    for (uint8_t i = index + 1; i < *size - 1; i++) // the arrays include an empty slot at the end, hence size - 1
+    for (uint16_t i = index + 1; i < *size - 1; i++) // the arrays include an empty slot at the end, hence size - 1
     {
         if (*(divPtr + index) % *(divPtr + i) != 0)
         {
