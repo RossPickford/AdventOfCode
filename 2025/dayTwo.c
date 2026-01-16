@@ -23,7 +23,7 @@ int main(void)
     uint64_t range[2];
     uint64_t val = 0;
 
-    /* while ((c = fgetc(input)) != EOF)
+    while ((c = fgetc(input)) != EOF)
     {
         if (c != '-' && c != ',' && c != '\n')
         {
@@ -48,10 +48,10 @@ int main(void)
     // ans += partOne(range);
     ans += partTwo(range);
 
-    printf("\n%llu\n", ans); */
+    printf("\n%llu\n", ans);
 
-    uint64_t test[2] = {95, 115};
-    uint64_t result = partTwo(test);
+    // uint64_t test[2] = {95, 115};
+    // uint64_t result = partTwo(test);
 
     return 0;
 }
@@ -96,7 +96,7 @@ uint64_t partTwo(uint64_t *input)
     uint16_t inDigCount_1 = getDigitCount(*input);
     uint16_t inDigCount_2 = getDigitCount(*(input + 1));
 
-    printf("%llu, %llu\n", *input, *(input + 1));
+    printf("inputs: %llu, %llu\n", *input, *(input + 1));
 
     uint16_t **divList = getDivisionList(inDigCount_1, inDigCount_2);
 
@@ -108,6 +108,7 @@ uint64_t partTwo(uint64_t *input)
 
     for (uint16_t i = 0; *(divList + i) != NULL; i++)
     {
+        printf("digit and divisor: ");
         for (uint16_t j = 0; *(divList[i] + j) != 0; j++)
         {
             printf("%u ", *(divList[i] + j));
@@ -203,11 +204,18 @@ uint16_t **getDivisionList(uint16_t inDigiCount_1, uint16_t inDigiCount_2) // Fi
             if (inDigiCount_1 % div == 0)
             {
                 divPtr = (uint16_t *)realloc(divPtr, ++size);
+
+                if (divPtr == NULL)
+                {
+                    printf("Failed To reallocate Memory\n");
+                    exit(0);
+                }
+
                 *(divPtr + divIndex++) = div;
             }
         }
 
-        uint16_t divSize = divIndex + 1;
+        // uint16_t divSize = divIndex + 1;
         // divPtr = removeDividends(divPtr, 1, &divSize);
 
         *(divPtr + divIndex) = 0; // Signals the end of the divisor list
@@ -276,11 +284,13 @@ void intToString(uint64_t val, char s_val[], uint16_t length)
 
 void freeDouble(uint16_t **dbPtr)
 {
-    uint16_t size = sizeof(dbPtr) / sizeof(dbPtr[0]);
+    // uint16_t size = sizeof(dbPtr) / sizeof(dbPtr[0]);
 
-    for (uint16_t i = 0; i < size; i++)
+    uint16_t i;
+    for (i = 0; *(dbPtr + i) != NULL; i++)
         free(dbPtr[i]);
 
+    free(dbPtr[i]);
     free(dbPtr);
 }
 
