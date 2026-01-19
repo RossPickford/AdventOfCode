@@ -16,8 +16,8 @@ int main(void)
 {
     uint64_t ans = 0;
 
-    FILE *input = fopen("DayTwo_TestInput.txt", "r");
-    // FILE *input = fopen("DayTwo_Input.txt", "r");
+    // FILE *input = fopen("DayTwo_TestInput.txt", "r");
+    FILE *input = fopen("DayTwo_Input.txt", "r");
 
     int8_t c;
     uint64_t range[2];
@@ -174,7 +174,7 @@ uint16_t getDigitCount(uint32_t num)
 
 uint16_t **getDivisionList(uint16_t inDigiCount_1, uint16_t inDigiCount_2) // First row is the digit length, the rest are the divisors associated with that length in the same collumn
 {
-    uint16_t **list = (uint16_t **)malloc(sizeof(uint16_t *) * (inDigiCount_2 - inDigiCount_1 + 1)); // dynamic 2D array. Pointer to pointers
+    uint16_t **list = (uint16_t **)malloc(sizeof(uint16_t *) * (inDigiCount_2 - inDigiCount_1 + 2)); // dynamic 2D array. Pointer to pointers. Size of difference between input values
 
     if (list == NULL)
     {
@@ -215,9 +215,6 @@ uint16_t **getDivisionList(uint16_t inDigiCount_1, uint16_t inDigiCount_2) // Fi
             }
         }
 
-        // uint16_t divSize = divIndex + 1;
-        // divPtr = removeDividends(divPtr, 1, &divSize);
-
         *(divPtr + divIndex) = 0; // Signals the end of the divisor list
 
         *(list + i++) = divPtr; // Add the list to the main 2D array
@@ -225,48 +222,6 @@ uint16_t **getDivisionList(uint16_t inDigiCount_1, uint16_t inDigiCount_2) // Fi
 
     *(list + i) = NULL; // Signals end of the rows
     return list;
-}
-
-uint16_t *removeDividends(uint16_t *divPtr, uint16_t index, uint16_t *size)
-{
-    if (index >= *size - 1)
-        return divPtr;
-
-    uint16_t tempSize = index + 2; // The extra two is to convert an index to a size (+1) and then an extra space for the empty end slot
-    uint16_t *divPtrTemp = (uint16_t *)malloc(sizeof(uint16_t) * tempSize);
-
-    if (divPtrTemp == NULL)
-    {
-        printf("Failed To allocate Memory\n");
-        exit(0);
-    }
-
-    for (uint16_t i = 0; i <= index; i++) // Fill new array with values already checked.
-        *(divPtrTemp + i) = *(divPtr + i);
-
-    for (uint16_t i = index + 1; i < *size - 1; i++) // the arrays include an empty slot at the end, hence size - 1
-    {
-        if (*(divPtr + index) % *(divPtr + i) != 0)
-        {
-            divPtrTemp = (uint16_t *)realloc(divPtrTemp, tempSize + 1);
-
-            if (divPtrTemp == NULL)
-            {
-                printf("Failed To reallocate Memory\n");
-                exit(0);
-            }
-
-            *(divPtrTemp + tempSize++ - 1) = *(divPtr + i); // add the successful value to the end of the array
-        }
-    }
-
-    free(divPtr);
-
-    if (tempSize == *size)
-        return divPtrTemp;
-
-    *size = tempSize;
-    return removeDividends(divPtrTemp, ++index, size);
 }
 
 void intToString(uint64_t val, char s_val[], uint16_t length)
@@ -284,8 +239,6 @@ void intToString(uint64_t val, char s_val[], uint16_t length)
 
 void freeDouble(uint16_t **dbPtr)
 {
-    // uint16_t size = sizeof(dbPtr) / sizeof(dbPtr[0]);
-
     uint16_t i;
     for (i = 0; *(dbPtr + i) != NULL; i++)
         free(dbPtr[i]);
