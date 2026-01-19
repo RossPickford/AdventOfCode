@@ -8,7 +8,6 @@ uint64_t partOne(uint64_t *ans);
 uint64_t partTwo(uint64_t *input);
 uint16_t getDigitCount(uint32_t num);
 uint16_t **getDivisionList(uint16_t inDigiCount_1, uint16_t inDigiCount_2);
-uint16_t *removeDividends(uint16_t *divPtr, uint16_t index, uint16_t *size);
 void intToString(uint64_t val, char s_val[], uint16_t length);
 void freeDouble(uint16_t **dbPtr);
 
